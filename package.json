@@ -4,7 +4,7 @@
   "description": "",
   "private": true,
   "scripts": {
-    "serve": "webpack-dev-server --env.mode=dev --config ./webpack/webpack.base.js",
+    "serve": "webpack-dev-server",
     "serve:dev": "webpack-dev-server --env.mode=dev --config ./webpack/webpack.dev.js",
     "serve:test": "webpack-dev-server --env.mode=test --config ./webpack/webpack.dev.js",
     "serve:prod": "webpack-dev-server --env.mode=prod --config ./webpack/webpack.dev.js",
@@ -16,9 +16,18 @@
   "author": "李月茹",
   "license": "ISC",
   "devDependencies": {
+    "@babel/core": "^7.4.4",
+    "@babel/plugin-transform-runtime": "^7.4.4",
+    "@babel/polyfill": "^7.4.4",
+    "@babel/preset-env": "^7.4.4",
+    "@babel/preset-react": "^7.0.0",
     "autoprefixer": "^9.5.1",
+    "babel-loader": "^8.0.5",
+    "clean-webpack-plugin": "^2.0.1",
+    "core-js": "^2.6.5",
     "css-loader": "^2.1.1",
     "file-loader": "^3.0.1",
+    "html-webpack-plugin": "^3.2.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.6.0",
@@ -26,7 +35,12 @@
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
     "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.1"
+    "webpack-cli": "^3.3.1",
+    "webpack-dev-server": "^3.3.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@babel/runtime": "^7.4.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6"
+  }
 }
