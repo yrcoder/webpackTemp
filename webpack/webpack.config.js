@@ -15,6 +15,9 @@ module.exports = {
 		open: true,
 		hot: true,
 	},
+	optimization: {
+		usedExports: true,
+	},
 	output: {
 		// html-webpack-plugin生成的html自动引入的js的地址或者域名，默认是同级文件
 		// publicPath: './', 这个东西会影响devServer，让文件什么都打不开，可能只有在production的时候打开

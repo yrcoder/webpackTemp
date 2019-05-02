@@ -12,8 +12,8 @@
 // import style from './styles/a.less'
 // console.log(style, 'modules === true')
 
-// iconfont(不知为何引用报错)
-// import './styles/iconfont.css']
+// iconfont(不知为何引用报错),私自删除了base64的代码
+// import './styles/iconfont.css'
 // var dom = document.getElementById('root')
 // dom.innerHTML = '<div class="iconfont icon-back"></div>'
 
@@ -41,11 +41,17 @@
 // })
 
 // React
-import React, { Component } from 'react'
-import ReactDOM from 'react-dom'
-class App extends Component {
-	render() {
-		return <div>111</div>
-	}
-}
-ReactDOM.render(<App />, document.getElementById('root'))
+// import React, { Component } from 'react'
+// import ReactDOM from 'react-dom'
+// class App extends Component {
+// 	render() {
+// 		return <div>111</div>
+// 	}
+// }
+// ReactDOM.render(<App />, document.getElementById('root'))
+
+// Tree Shaking
+import { add } from './utils/index.js'
+
+const a = add(1, 2)
+console.log(a)

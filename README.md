@@ -10,6 +10,7 @@ inline-source-map: 打包到 main.js 文件中（base64），不会出现 main.j
 cheap-inline-source-map: 报错返回的是源文件的行数，inline-source-map 报错会精确到哪一行的哪一个字符。cheap 是只返回行就好了，而且只会管业务代码的报错，不会管第三方模块和 loader 等的报错，性能会好。
 cheap-module-source-map：会管第三方模块和 loader 等的报错， production 环境推荐。
 cheap-module-eval-source-map： 以 eval 的方式生产 map 文件，不会有 main.js.map，也不会有 base64 文件,速度最快， development 环境推荐
+Tree Shaking: 在业务代码中引入的包 import { add } from './utils/index.js'，如果 utils 文件中还有别的函数也会被打包到 main.js 文件中。Tree Shaking 引入什么就指打包什么。Tree Shaking 只支持 import 这种方式的引入，如果是 require 等方式的引入则不支持。webpack 配置 optimization: {usedExports: true},在 package.json 中配置 sideEffects: ["@babel/polly-fill"],@babel/polly-fill 这种是在 window 上挂载某些函数，不会导出任何东西，Tree Shaking 遇到没有引入使用的文件就会忽略。sideEffects 配置是让某些文件不 Tree Shaking。@babel/polly-fill 当用了 useBuiltIns 之后就自动打包了，不需要在业务代码中引入，所以 sideEffects 设置为 false 即可。但是样式也一般不 Tree Shaking。development 模式下，用了 tree shaking 没有引入的代码也会打包进去的，但是 webpack 会用注释标出只引入了什么函数，因为 development 会有 sourceMap
 指令注解
 
 ```sh
@@ -46,7 +47,7 @@ npm install --save-d 安装的包，包的含义
 6.  less 文件用：style-loader,css-loader,less-loader 不起作用，替换成 MiniCssExtractPlugin 之后报错 Unexpected token import
 7.  postcss-loader: 自动添加厂商前缀插件可以写在这里
 8.  autoprefixer: 自动添加厂商前缀
-9.  iconfont: 用 file-loader 打包
+9.  iconfont: 用 file-loader 打包，删除了 base64 的代码,于是 iconfont 显示不出来
 10. babel-loader: 帮助 webpack 做打包的工具，webpack 和 babel 的桥梁，两者做了打通，但是并不会把 es5 的语法转成 es6 的语法。@babel/preset-env 是把 es5 的语法转成 es6 的语法的。
 
     -   配置项 options 可以写在.babelrc 文件中
@@ -57,6 +58,7 @@ npm install --save-d 安装的包，包的含义
 
         - 按需加载需要配置 babel-loader 的 options: {presets: [["@babel/preset-env", {useBuiltIns: 'usage'}]]}。
         - useBuiltIns: 'usage'这个会报错，import '@babel/polyfill'会报错, 需要安装 core-js@2,core-js@3
+        - 当用了useBuiltIns: usage 之后，已经自动引入@babel/polyfill，不用在业务代码中引入。
         - 会污染全局环境（写业务项目没有问题，但是库项目就不可以了。babel/plugin-transform-runtime，以闭包的形式引入，配合使用@babel/runtime 和@babel/runtime-corejs2）
 
     [https://www.babeljs.cn/docs/babel-plugin-transform-runtime](官网)
@@ -83,3 +85,4 @@ npm install --save-d 安装的包，包的含义
     - 热模块更新: 改了 js 代码之后不刷新了但是，内容也没有替换。可以手动的写一些函数让它替换 if(module.hot) {module.hot.accept('index.js', () => {
       当 index.js 更改之后就会执行这段代码
       })}，但是特别不好。css 就不用，原因是 css-loader 已经实现了这段代码。vue-loader 也内置了，react 借助了一下 babel-preset 也实现了这种功能。如果是纯数据的 loader 没有内置就需要写这段代码
+4. wepack-merge: 合并 webpack 配置文件
