@@ -51,7 +51,34 @@
 // ReactDOM.render(<App />, document.getElementById('root'))
 
 // Tree Shaking
-import { add } from './utils/index.js'
+// import { add } from './utils/index.js'
 
-const a = add(1, 2)
-console.log(a)
+// const a = add(1, 2)
+// console.log(a)
+
+// code Splitting
+// 静态引入lodash
+// import _ from 'lodash'
+// console.log(_.join(['a', 'b', 'c'], '---'))
+// 动态引入lodash（打包生成的文件名叫vendors～lodash.js）
+// function getComponent() {
+// 	return import(/* webpackChunkName: "lodash" */ /* webpackPrefetch: true */ 'lodash').then(({ default: _ }) => {
+// 		var ele = document.createElement('div')
+// 		ele.innerHTML = _.join(['a', 'b'], '--')
+// 		return ele
+// 	})
+// }
+// document.addEventListener('click', () => {
+// 	getComponent().then(ele => {
+// 		document.body.appendChild(ele)
+// 	})
+// })
+
+// resolve
+// import { add } from 'utils'
+// const a = add(1, 2)
+// console.log(a)
+
+// css代码拆分
+
+import 'styles/index.less'

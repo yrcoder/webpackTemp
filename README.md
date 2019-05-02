@@ -4,13 +4,30 @@ webpack 能翻译所有方式引入的语法，ES Module、 commonjs、 AMD、 C
 webpack 原始只能打包 js 文件，生产 js 文件，如果碰到不是 js 的文件就看配置文件中用什么 loader 打包
 webpack 的入口是 index.js 而不是 index.html
 webpack 打包的位置始终是当前位置的根目录（./dist），不管入口文件在多么深的文件夹中
+
 loader: 某种特定格式的打包文件,执行从右往左执行
+
 source-map: 是打包文件和源文件的映射,配置 devtool 项,production 默认关闭。dist 目录下会出现一个 main.js.map。但是报错返回的是 main.js 的行数
 inline-source-map: 打包到 main.js 文件中（base64），不会出现 main.js.map 文件。但是报错返回的是源文件的行数
 cheap-inline-source-map: 报错返回的是源文件的行数，inline-source-map 报错会精确到哪一行的哪一个字符。cheap 是只返回行就好了，而且只会管业务代码的报错，不会管第三方模块和 loader 等的报错，性能会好。
 cheap-module-source-map：会管第三方模块和 loader 等的报错， production 环境推荐。
 cheap-module-eval-source-map： 以 eval 的方式生产 map 文件，不会有 main.js.map，也不会有 base64 文件,速度最快， development 环境推荐
+
 Tree Shaking: 在业务代码中引入的包 import { add } from './utils/index.js'，如果 utils 文件中还有别的函数也会被打包到 main.js 文件中。Tree Shaking 引入什么就指打包什么。Tree Shaking 只支持 import 这种方式的引入，如果是 require 等方式的引入则不支持。webpack 配置 optimization: {usedExports: true},在 package.json 中配置 sideEffects: ["@babel/polly-fill"],@babel/polly-fill 这种是在 window 上挂载某些函数，不会导出任何东西，Tree Shaking 遇到没有引入使用的文件就会忽略。sideEffects 配置是让某些文件不 Tree Shaking。@babel/polly-fill 当用了 useBuiltIns 之后就自动打包了，不需要在业务代码中引入，所以 sideEffects 设置为 false 即可。但是样式也一般不 Tree Shaking。development 模式下，用了 tree shaking 没有引入的代码也会打包进去的，但是 webpack 会用注释标出只引入了什么函数，因为 development 会有 sourceMap
+
+code splitting：代码中引入的库也会打包到 main.js 文件中，导致 js 文件太大，所以将库的文件单独打包。
+
+    - 自己做的code splitting: 创建一个单独引入包的文件，引入包然后挂载在 window 上，在entry中多一个入口文件，这样打包之后就会有两个js文件。但是dll.js文件也会生成一个map文件
+    - 插件做code splitting（同步引入）: 配置 optimization: {splitChunks: {chunks: 'all'}}生成一个文件vendors-main.js和vendors~main.js.map文件
+    - 动态引入的库，会自动进行splitting。动态引用组件“dynamicImport”需要引入@babel/plugin-syntax-dynamic-import,配置.babelrc文件
+    - 动态引入的库的名称可以通过魔法注释命名，默认是 1.js，动态是以数字命名
+    - webpackPrefetch: true 当主要文件加载完就可以加载动态文件
+
+路由文件要动态引入
+
+PWA： 是指如果第一次访问成功了，那么在本地会有一个缓存，当服务器关闭就会运行缓存中的内容让之前打开过的页面可以展示出来，只有要上线的代码才需要做 PWA 的处理
+
+生成的 css 文件会被 html 直接引用，就走 filename 这个配置项，二级才引用到的文件走 chunkFilename 这个配置项
 指令注解
 
 ```sh
@@ -86,3 +103,12 @@ npm install --save-d 安装的包，包的含义
       当 index.js 更改之后就会执行这段代码
       })}，但是特别不好。css 就不用，原因是 css-loader 已经实现了这段代码。vue-loader 也内置了，react 借助了一下 babel-preset 也实现了这种功能。如果是纯数据的 loader 没有内置就需要写这段代码
 4. wepack-merge: 合并 webpack 配置文件
+5. webpack-bundle-analyzer: 打包分析的插件
+6. friendly-errors-webpack-plugin: 清理 webpack 编译时输出的无用信息 npm i -D friendly-errors-webpack-plugin node-notifier
+7. MiniCssExtractPlugin: css 拆分，默认会把 css 代码打包到 js 文件中。但是如果拆分代码就不能实时更新 css 样式，所以一般在线上环境才用
+    - 安装插件，plugins 中 new 一个实例
+    - 在 webpack.prod.js 中，把 style-loader 替换成 MiniCssExtractPlugin.loader
+    - 会受 tree shaking 影响 sideEffects: ["*.css","*.less"]
+    - 配置 filename 和 chunkFilename
+    - 生成的 css 文件会被 html 直接引用，会把间接引用的 css 文件和这个打包到一起，但是该文件不会压缩
+8. optimize-css-assets-webpack-plugin: 压缩 css 的插件,在 optimization 的 minimizer 中实例化 optimization: {minimizer: [new optimizeCssAssetsWebpackPlugin({})]},

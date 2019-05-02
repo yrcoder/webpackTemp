@@ -7,13 +7,35 @@ const devConfig = {
 	devtool: 'cheap-inline-source-map',
 	devServer: {
 		// devServer在dist文件夹下起一个服务器，当代码更新的时候自动打包
-		contentBase: path.resolve(__dirname, 'dist'),
+		contentBase: path.resolve(__dirname, '../dist'),
 		port: 4000,
 		open: true,
 		hot: true,
 	},
-	optimization: {
-		usedExports: true,
+	module: {
+		rules: [
+			{
+				test: /\.(le|c)ss$/,
+				use: [
+					{
+						loader: 'style-loader',
+					},
+					{
+						loader: 'css-loader',
+						options: {
+							importLoaders: 2,
+							// modules: true,
+						},
+					},
+					{
+						loader: 'less-loader',
+					},
+					{
+						loader: 'postcss-loader',
+					},
+				],
+			},
+		],
 	},
 	plugins: [new webpack.HotModuleReplacementPlugin()],
 }

@@ -4,11 +4,11 @@
   "description": "",
   "private": true,
   "sideEffects": [
-    "*.css"
+    "*.css",
+    "*.less"
   ],
   "scripts": {
-    "serve": "webpack-dev-server",
-    "serve:dev": "webpack-dev-server --env.mode=dev --config ./webpack/webpack.dev.js",
+    "serve": "webpack-dev-server --env.mode=dev --config ./webpack/webpack.dev.js",
     "serve:test": "webpack-dev-server --env.mode=test --config ./webpack/webpack.dev.js",
     "serve:prod": "webpack-dev-server --env.mode=prod --config ./webpack/webpack.dev.js",
     "build:test": "webpack --env.mode=test --config ./webpack/webpack.prod.js",
@@ -20,6 +20,7 @@
   "license": "ISC",
   "devDependencies": {
     "@babel/core": "^7.4.4",
+    "@babel/plugin-syntax-dynamic-import": "^7.2.0",
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/polyfill": "^7.4.4",
     "@babel/preset-env": "^7.4.4",
@@ -30,20 +31,25 @@
     "core-js": "^2.6.5",
     "css-loader": "^2.1.1",
     "file-loader": "^3.0.1",
+    "friendly-errors-webpack-plugin": "^1.7.0",
     "html-webpack-plugin": "^3.2.0",
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.6.0",
+    "node-notifier": "^5.4.0",
+    "optimize-css-assets-webpack-plugin": "^5.0.1",
     "postcss-loader": "^3.0.0",
     "style-loader": "^0.23.1",
     "url-loader": "^1.1.2",
     "webpack": "^4.30.0",
+    "webpack-bundle-analyzer": "^3.3.2",
     "webpack-cli": "^3.3.1",
     "webpack-dev-server": "^3.3.1",
     "webpack-merge": "^4.2.1"
   },
   "dependencies": {
     "@babel/runtime": "^7.4.4",
+    "lodash": "^4.17.11",
     "react": "^16.8.6",
     "react-dom": "^16.8.6"
   }
