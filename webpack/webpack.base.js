@@ -1,11 +1,36 @@
-const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin')
-const CleanWebpackPlugin = require('clean-webpack-plugin')
+const path = require('path');
+const fs = require('fs');
+const webpack = require('webpack');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 // const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
-const WebpackBundleAnalyzer = require('webpack-bundle-analyzer')
+const WebpackBundleAnalyzer = require('webpack-bundle-analyzer');
+const AddAssetHtmlWbpackPlugin = require('add-asset-html-webpack-plugin');
+
+const getVendors = () => {
+	const vendorPlugin = [];
+	const files = fs.readdirSync(path.resolve(__dirname, '../dll'));
+	files.forEach((file) => {
+		if (/.*\.dll.js/.test(file)) {
+			vendorPlugin.push(
+				new AddAssetHtmlWbpackPlugin({
+					filepath: path.resolve(__dirname, '../dll', file),
+				}),
+			);
+		}
+		if (/.*\.manifest.json/.test(file)) {
+			vendorPlugin.push(
+				new webpack.DllReferencePlugin({
+					manifest: path.resolve(__dirname, '../dll', file),
+				}),
+			);
+		}
+	});
+	return vendorPlugin;
+};
 module.exports = {
 	entry: {
-		main: './src/index.js',
+		main: './src/index.jsx',
 		// 也会生成一个map文件
 		// dll: './src/dll.js',
 	},
@@ -38,10 +63,16 @@ module.exports = {
 		rules: [
 			{
 				test: /\.js(x)?$/,
-				exclude: /node_modules/,
-				use: {
-					loader: 'babel-loader',
-				},
+				// exclude: /node_modules/,
+				include: path.resolve(__dirname, '../src'),
+				use: [
+					{
+						loader: 'babel-loader',
+					},
+					{
+						loader: 'eslint-loader',
+					},
+				],
 			},
 			{
 				test: /\.(jpg|png|gif)$/,
@@ -72,7 +103,8 @@ module.exports = {
 			filename: 'index.html',
 		}),
 		new CleanWebpackPlugin(),
-		// new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
+		...getVendors(),
+		new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
 		// new FriendlyErrorsWebpackPlugin({
 		// 	compilationSuccessInfo: {
 		// 		messages: [`Your application is running here: `],
@@ -81,4 +113,4 @@ module.exports = {
 		// 	clearConsole: true,
 		// }),
 	],
-}
+};

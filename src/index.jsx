@@ -41,14 +41,15 @@
 // })
 
 // React
-// import React, { Component } from 'react'
-// import ReactDOM from 'react-dom'
+// import React, { Component } from 'react';
+// import ReactDOM from 'react-dom';
+
 // class App extends Component {
 // 	render() {
-// 		return <div>111</div>
+// 		return <div>111</div>;
 // 	}
 // }
-// ReactDOM.render(<App />, document.getElementById('root'))
+// ReactDOM.render(<App />, document.getElementById('root'));
 
 // Tree Shaking
 // import { add } from './utils/index.js'
@@ -62,7 +63,8 @@
 // console.log(_.join(['a', 'b', 'c'], '---'))
 // 动态引入lodash（打包生成的文件名叫vendors～lodash.js）
 // function getComponent() {
-// 	return import(/* webpackChunkName: "lodash" */ /* webpackPrefetch: true */ 'lodash').then(({ default: _ }) => {
+// 	return import(/* webpackChunkName: "lodash" */
+//  /* webpackPrefetch: true */ 'lodash').then(({ default: _ }) => {
 // 		var ele = document.createElement('div')
 // 		ele.innerHTML = _.join(['a', 'b'], '--')
 // 		return ele
@@ -80,5 +82,11 @@
 // console.log(a)
 
 // css代码拆分
+// import 'styles/index.less';
 
-import 'styles/index.less'
+// 性能优化
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from 'views/home';
+
+ReactDOM.render(<App />, document.getElementById('root'));

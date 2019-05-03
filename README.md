@@ -28,6 +28,11 @@ code splitting：代码中引入的库也会打包到 main.js 文件中，导致
 PWA： 是指如果第一次访问成功了，那么在本地会有一个缓存，当服务器关闭就会运行缓存中的内容让之前打开过的页面可以展示出来，只有要上线的代码才需要做 PWA 的处理
 
 生成的 css 文件会被 html 直接引用，就走 filename 这个配置项，二级才引用到的文件走 chunkFilename 这个配置项
+
+ESLint: 约束代码规范,安装 npm install eslint -D 。通过 npx eslint --init 这个命令生成配置文件。问答的方式，提示安装一个 eslint-plugin-react。选择一种方式 airbnb 做下去即可。
+
+    - parser用babel-eslint这个解析器：安装
+
 指令注解
 
 ```sh
@@ -105,10 +110,29 @@ npm install --save-d 安装的包，包的含义
 4. wepack-merge: 合并 webpack 配置文件
 5. webpack-bundle-analyzer: 打包分析的插件
 6. friendly-errors-webpack-plugin: 清理 webpack 编译时输出的无用信息 npm i -D friendly-errors-webpack-plugin node-notifier
-7. MiniCssExtractPlugin: css 拆分，默认会把 css 代码打包到 js 文件中。但是如果拆分代码就不能实时更新 css 样式，所以一般在线上环境才用
+7. MiniCssExtractPlugin: css 拆分，默认会把 css 代码打包到 js 文件中。但是如果拆分代码就不能实时更新 css 样式（热加载），所以一般在线上环境才用
     - 安装插件，plugins 中 new 一个实例
     - 在 webpack.prod.js 中，把 style-loader 替换成 MiniCssExtractPlugin.loader
     - 会受 tree shaking 影响 sideEffects: ["*.css","*.less"]
     - 配置 filename 和 chunkFilename
     - 生成的 css 文件会被 html 直接引用，会把间接引用的 css 文件和这个打包到一起，但是该文件不会压缩
+    - 支持不同入口打包成不同的 css 文件分别引入，像 js 的 chunk 一样
 8. optimize-css-assets-webpack-plugin: 压缩 css 的插件,在 optimization 的 minimizer 中实例化 optimization: {minimizer: [new optimizeCssAssetsWebpackPlugin({})]},
+9. babel-eslint: 解析器,配置在 eslint 的 parser 选项中。在编辑器中安装 eslint 插件才可以报红。如果没有这个插件就不方便，所以可以配置在 webpack 中。用 eslint-loader,配置之后在命令行中会报错，但是不是很直观。在 devServer 中有一个配置项可以当有报错的时候弹一层。devServer: {overlay: true}。在 webpack 中配置会降低打包速度
+10. add-asset-html-webpack-plugin: 往 html-webpack-plugin 插件上再增加一些静态的资源, 资源会被自动放进 dist 目录下，并引入
+
+## webapck 打包性能优化
+
+1. loader 的 include: path.resolve(\_\_dirname, '../src'),配置
+2. 第三方模块只在第一次分析的时候打包，别的时候就不变了。src 业务代码只需要引入打包好的文件不用去用 node_moduls 下的文件
+    - 配置一个 webpack.dll.js 文件，把库文件专门打包成一个文件，再用插件把这个包引到 html 中
+    - 打包生成的文件通过一个全局变量暴露出去，名字是 entry 中起的。output: {library: '[name]'}
+    - 在 html 中引入这个打包后的文件，add-asset-html-webpack-plugin
+    - 在引入包的时候不去 node_moduls 下找，直接引入 dll 文件，配置插件,
+      生成一个对包文件的映射文件。 webpack.DllPlugin({
+      name: '[name]',
+      path: path.resolve(\_\_dirname, '../dll/[name].manifest.json')
+      }), 在 base.js 中配置 webpack.DllReferencePlugin({
+      manifest: path.resolve(\_\_dirname, '../dll/vendors.manifest.json'),
+      }) 去找对应的文件
+    - 如果 dll 的入口文件改成多个，就要更改 base.js 中的配置，故需要写成函数

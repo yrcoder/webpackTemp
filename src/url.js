@@ -6,10 +6,10 @@ export const APIURL = {
 	prod: '',
 	test: '',
 	dev: '',
-}
+};
 // SSO地址
 export const SSOURL = {
 	prod: '',
 	test: '',
 	dev: '',
-}
+};
