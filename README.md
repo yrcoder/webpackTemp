@@ -33,6 +33,7 @@ ESLint: 约束代码规范,安装 npm install eslint -D 。通过 npx eslint --i
 
     - parser用babel-eslint这个解析器：安装
 
+代码利用率：控制台 console 面板中输入 command+shift+p,搜索 coverage，面板左侧又一个录制的按钮，按钮变红之后刷新页面。查看页面代码利用率，红色是未使用
 指令注解
 
 ```sh
