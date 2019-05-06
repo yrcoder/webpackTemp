@@ -3,7 +3,6 @@ const fs = require('fs');
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-// const FriendlyErrorsWebpackPlugin = require('friendly-errors-webpack-plugin')
 const WebpackBundleAnalyzer = require('webpack-bundle-analyzer');
 const AddAssetHtmlWbpackPlugin = require('add-asset-html-webpack-plugin');
 
@@ -105,12 +104,5 @@ module.exports = {
 		new CleanWebpackPlugin(),
 		...getVendors(),
 		new WebpackBundleAnalyzer.BundleAnalyzerPlugin(),
-		// new FriendlyErrorsWebpackPlugin({
-		// 	compilationSuccessInfo: {
-		// 		messages: [`Your application is running here: `],
-		// 	},
-		// 	// onErrors: config.dev.notifyOnErrors ? utils.createNotifierCallback() : undefined,
-		// 	clearConsole: true,
-		// }),
 	],
 };
